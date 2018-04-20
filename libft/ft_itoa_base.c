@@ -6,7 +6,7 @@
 /*   By: hahmed <hahmed@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/02 10:28:24 by hahmed            #+#    #+#             */
-/*   Updated: 2018/04/08 21:44:11 by hahmed           ###   ########.fr       */
+/*   Updated: 2018/04/15 15:43:40 by hahmed           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ char	*ft_itoa_base(intmax_t n, int base)
 	char	*new;
 	char	*symbols;
 
-	if (base < 2 || 16 < base)
-		return (NULL);
 	if (n < -9223372036854775807)
 		return (ft_strdup("-9223372036854775808"));
 	digits = ft_digits_base(n, base);

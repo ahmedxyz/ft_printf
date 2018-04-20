@@ -1,27 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   print_ws.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hahmed <hahmed@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/23 15:47:17 by hahmed            #+#    #+#             */
-/*   Updated: 2018/04/20 01:58:24 by hahmed           ###   ########.fr       */
+/*   Created: 2018/04/16 09:51:30 by hahmed            #+#    #+#             */
+/*   Updated: 2018/04/20 04:16:00 by hahmed           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_printf.h"
 
-char	*ft_strchr(const char *s, int c)
+int		print_ws(va_list arg, t_format *format)
 {
-	size_t	i;
+	wchar_t		*str;
+	int			precision;
 
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == (char)c)
-			return ((char *)s + i);
-		i++;
-	}
-	return (NULL);
+	if (!(str = (wchar_t*)va_arg(arg, wchar_t*)))
+		str = L"(null)";
+	precision = format->precision;
+	if (precision < 0 || (int)ft_wstrlen(str) < precision)
+		precision = ft_wstrlen(str);
+	return (print_with_padding_nwstr(format, str, precision));
 }

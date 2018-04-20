@@ -6,7 +6,7 @@
 /*   By: hahmed <hahmed@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/19 14:37:47 by hahmed            #+#    #+#             */
-/*   Updated: 2018/04/04 20:30:21 by hahmed           ###   ########.fr       */
+/*   Updated: 2018/04/18 14:09:29 by hahmed           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,10 @@ int					ft_wcharlen(wchar_t c);
 void				ft_putwchar(wchar_t c);
 size_t				ft_wstrlen(wchar_t *s);
 void				ft_putwstr(wchar_t *s);
+int					ft_max(int n1, int n2);
+int					ft_min(int n1, int n2);
+void				ft_putnchar(char c, int n);
+void				ft_putnstr(char *s, int n);
+void				ft_putnwstr(wchar_t *s, int n);
 
 #endif

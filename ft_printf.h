@@ -6,7 +6,7 @@
 /*   By: hahmed <hahmed@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/14 15:01:57 by hahmed            #+#    #+#             */
-/*   Updated: 2018/04/11 03:29:13 by hahmed           ###   ########.fr       */
+/*   Updated: 2018/04/20 02:04:35 by hahmed           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,61 +19,87 @@
 # include <unistd.h>
 # include <wchar.h>
 
-/* DELETE ME */
-# include <stdio.h>
-/* DELETE ME */
-
-typedef struct		s_input
+typedef struct	s_format
 {
-	va_list			arg;
-	char			*string;
-	int				index;
-	int				chars_printed;
-}					t_input;
+	int			flag_hash;
+	int			flag_zero;
+	int			flag_minus;
+	int			flag_plus;
+	int			flag_space;
+	int			width;
+	int			precision;
+	char		length;
+	char		conversion;
+}				t_format;
 
-typedef struct		s_format
-{
-	int				flag_hash;
-	int				flag_zero;
-	int				flag_minus;
-	int				flag_plus;
-	int				flag_space;
-	int				width;
-	int				precision;
-	char			length;
-	char			conversion;
-}					t_format;
+/*
+** ft_printf.c
+*/
 
-/* ft_printf.c */
+int				print_specifier(va_list arg, t_format *format, char **input);
+int				parse_specifier(va_list arg, char **input);
+int				parse_input(va_list arg, char **input);
+int				ft_printf(const char *input, ...);
 
-void	print_specifier(t_input *input, t_format *format);
-void	parse_specifier(t_input *input);
-void	parse_input(t_input *input);
-int		ft_printf(const char *format, ...);
+/*
+** parse.c
+*/
 
-/* ft_check.c */
+void			parse_flags(t_format *format, char **input);
+void			parse_width(va_list arg, t_format *format, char **input);
+void			parse_precision(va_list arg, t_format *format, char **input);
+void			parse_length(t_format *format, char **input);
+void			parse_conversion(t_format *format, char **input);
 
-void	check_flags(t_input *input, t_format *format);
-void	check_width(t_input *input, t_format *format);
-void	check_precision(t_input *input, t_format *format);
-void	check_length(t_input *input, t_format *format);
-void	check_conversion(t_input *input, t_format *format);
+/*
+** cast_length.c
+*/
 
-/* length */
+intmax_t		cast_length_signed(va_list arg, t_format *format);
+intmax_t		cast_length_unsigned(va_list arg, t_format *format);
 
-intmax_t	get_length_signed(t_input *input, t_format *format);
-intmax_t	get_length_unsigned(t_input *input, t_format *format);
+/*
+** string.c
+*/
 
-/* print functions */
+char			*append(char *s, char c);
+char			*prepend(char *s, char c);
+char			*trim_first(char *s);
+char			*ft_strtoupper(char *s);
+char			*ft_strjoin_wrapper(char *s1, char *s2);
 
-void	print_d(t_input *input, t_format *format);
-void	print_u(t_input *input, t_format *format);
-void	print_o(t_input *input, t_format *format);
-void	print_x(t_input *input, t_format *format);
-void	print_p(t_input *input, t_format *format);
-void	print_c(t_input *input, t_format *format);
-void	print_s(t_input *input, t_format *format);
-void	print_percent(t_input *input, t_format *format);
-void	print_invalid(t_input *input, t_format *format);
+/*
+** format.c
+*/
+
+char			*add_sign(t_format *format, char *prefix, int is_negative);
+char			*add_prefix(t_format *format, char *prefix);
+char			*add_leading_zeros(t_format *format, char *str, int prefix_len);
+
+/*
+** conversion functions
+*/
+
+int				print_d(va_list arg, t_format *format);
+int				print_u(va_list arg, t_format *format);
+int				print_o(va_list arg, t_format *format);
+int				print_x(va_list arg, t_format *format);
+int				print_p(va_list arg, t_format *format);
+int				print_c(va_list arg, t_format *format);
+int				print_wc(va_list arg, t_format *format);
+int				print_s(va_list arg, t_format *format);
+int				print_ws(va_list arg, t_format *format);
+int				print_percent(t_format *format);
+int				print_invalid(char **input);
+
+/*
+** print_with_padding.c
+*/
+
+int				print_with_padding_nstr(t_format *format, char *str, int n);
+int				print_with_padding_nstr_wrapper(t_format *format, char *str);
+int				print_with_padding_nwstr(t_format *format, wchar_t *str, int n);
+int				print_with_padding_char(t_format *format, char c);
+int				print_with_padding_wchar(t_format *format, wchar_t c);
 
 #endif

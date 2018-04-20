@@ -6,81 +6,83 @@
 /*   By: hahmed <hahmed@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/14 15:02:07 by hahmed            #+#    #+#             */
-/*   Updated: 2018/04/11 03:29:09 by hahmed           ###   ########.fr       */
+/*   Updated: 2018/04/20 04:15:25 by hahmed           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	print_specifier(t_input *input, t_format *format)
+int		print_specifier(va_list arg, t_format *format, char **input)
 {
-	if (format->conversion == 0)
-		print_invalid(input, format);
-	else if (format->conversion == '%')
-		print_percent(input, format);
-	else if (format->conversion == 'd' || format->conversion == 'i' ||
-			format->conversion == 'D')
-		print_d(input, format);
-	else if (format->conversion == 'u' || format->conversion == 'U')
-		print_u(input, format);
-	else if (format->conversion == 'o' || format->conversion == 'O')
-		print_o(input, format);
+	if (format->conversion == 'd' || format->conversion == 'i')
+		return (print_d(arg, format));
+	else if (format->conversion == 'u')
+		return (print_u(arg, format));
+	else if (format->conversion == 'o')
+		return (print_o(arg, format));
 	else if (format->conversion == 'x' || format->conversion == 'X')
-		print_x(input, format);
+		return (print_x(arg, format));
 	else if (format->conversion == 'p')
-		print_p(input, format);
-	else if (format->conversion == 'c' || format->conversion == 'C')
-		print_c(input, format);
-	else if (format->conversion == 's' || format->conversion == 'S')
-		print_s(input, format);
+		return (print_p(arg, format));
+	else if (format->conversion == 'c' && format->length == 'l')
+		return (print_wc(arg, format));
+	else if (format->conversion == 'c')
+		return (print_c(arg, format));
+	else if (format->conversion == 's' && format->length == 'l')
+		return (print_ws(arg, format));
+	else if (format->conversion == 's')
+		return (print_s(arg, format));
+	else if (format->conversion == '%')
+		return (print_percent(format));
+	else
+		return (print_invalid(input));
 }
 
-void	parse_specifier(t_input *input)
+int		parse_specifier(va_list arg, char **input)
 {
 	t_format	*format;
+	int			chars_printed;
 
 	format = (t_format*)malloc(sizeof(t_format));
-	check_flags(input, format);
-	check_width(input, format);
-	check_precision(input, format);
-	check_length(input, format);
-	check_conversion(input, format);
-	print_specifier(input, format);
+	parse_flags(format, input);
+	parse_width(arg, format, input);
+	parse_precision(arg, format, input);
+	parse_length(format, input);
+	parse_conversion(format, input);
+	chars_printed = print_specifier(arg, format, input);
 	free(format);
+	return (chars_printed);
 }
 
-void	parse_input(t_input *input)
+int		parse_input(va_list arg, char **input)
 {
-	while ((input->string)[input->index] != '\0')
+	int		chars_printed;
+
+	chars_printed = 0;
+	while (**input != '\0')
 	{
-		if ((input->string)[input->index] == '%')
+		if (**input == '%')
 		{
-			input->index++;
-			if ((input->string)[input->index] != '\0')
-				parse_specifier(input);
+			(*input)++;
+			chars_printed += parse_specifier(arg, input);
 		}
 		else
 		{
-			ft_putchar((input->string)[input->index]);
-			input->chars_printed++;
-			input->index++;
+			ft_putchar(**input);
+			chars_printed++;
+			(*input)++;
 		}
 	}
+	return (chars_printed);
 }
 
-int		ft_printf(const char *format, ...)
+int		ft_printf(const char *input, ...)
 {
-	t_input		*input;
-	int			ret;
+	va_list	arg;
+	int		chars_printed;
 
-	input = (t_input*)malloc(sizeof(t_input));
-	input->string = (char*)format;
-	input->index = 0;
-	input->chars_printed = 0;
-	va_start(input->arg, format);
-	parse_input(input);
-	va_end(input->arg);
-	ret = input->chars_printed;
-	free(input);
-	return (ret);
+	va_start(arg, input);
+	chars_printed = parse_input(arg, (char**)&input);
+	va_end(arg);
+	return (chars_printed);
 }
